@@ -33,6 +33,12 @@ async function run() {
       res.send(result);
     });
 
+    // get all issues data
+    app.get("/all-issues", async (req, res) => {
+      const result = await issuesCollection.find().toArray();
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
