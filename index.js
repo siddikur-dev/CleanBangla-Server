@@ -68,20 +68,41 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/my-issues", async (req, res) => {
+      try {
+        const query = {};
+        const email = req.query.email;
+        if (email) {
+          query.email = email; // email ফিল্ড যদি DB তে reporterEmail নামে থাকে
+        }
+
+        const cursor = issuesCollection.find(query);
+        const result = await cursor.toArray();
+
+        res.send(result);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: "Failed to fetch issues" });
+      }
+    });
+
     // post a new contribution
-    app.post("/contributions", async (req, res) => {
+    app.post("/all-contributions", async (req, res) => {
       const contribution = req.body;
       const result = await contributionCollection.insertOne(contribution);
       res.send(result);
     });
 
+    // get all contributions
+    app.get("/all-contributions", async (req, res) => {
+      const result = await contributionCollection.find().toArray();
+      res.send(result);
+    });
     // GET all contributions for a specific issue
-    app.get("/contributions/:id", async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: new ObjectId(id) };
+    app.get("/all-contributions/:id", async (req, res) => {
+      const issueId = req.params.id;
       const result = await contributionCollection
-        .find({ query })
-        .sort({ date: -1 })
+        .find({ issueId }) // findOne না, শুধু find
         .toArray();
       res.send(result);
     });
