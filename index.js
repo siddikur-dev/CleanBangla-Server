@@ -38,9 +38,27 @@ async function run() {
       const result = await issuesCollection.find().toArray();
       res.send(result);
     });
-    
+
     // get single issues data by id
     app.get("/all-issues/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await issuesCollection.findOne(query);
+      res.send(result);
+    });
+
+    // get recent complaints 6 card data
+    app.get("/recent-issues", async (req, res) => {
+      const query = issuesCollection
+        .find()
+        .sort({ date: "descending" })
+        .limit(6);
+      const result = await query.toArray();
+      res.send(result);
+    });
+
+    // get single card recent complaints
+    app.get("/recent-issues/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await issuesCollection.findOne(query);
