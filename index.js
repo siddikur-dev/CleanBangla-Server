@@ -23,6 +23,9 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     const issuesCollection = client.db("issuesDB").collection("all-issues");
+    const contributionCollection = client
+      .db("issuesDB")
+      .collection("all-contributions");
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
@@ -62,6 +65,24 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await issuesCollection.findOne(query);
+      res.send(result);
+    });
+
+    // post a new contribution
+    app.post("/contributions", async (req, res) => {
+      const contribution = req.body;
+      const result = await contributionCollection.insertOne(contribution);
+      res.send(result);
+    });
+
+    // GET all contributions for a specific issue
+    app.get("/contributions/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await contributionCollection
+        .find({ query })
+        .sort({ date: -1 })
+        .toArray();
       res.send(result);
     });
 
