@@ -68,6 +68,7 @@ async function run() {
       res.send(result);
     });
 
+    // get my added issues
     app.get("/my-issues", async (req, res) => {
       try {
         const query = {};
@@ -75,15 +76,46 @@ async function run() {
         if (email) {
           query.email = email; // email ফিল্ড যদি DB তে reporterEmail নামে থাকে
         }
-
         const cursor = issuesCollection.find(query);
         const result = await cursor.toArray();
-
         res.send(result);
       } catch (error) {
         console.error(error);
         res.status(500).send({ message: "Failed to fetch issues" });
       }
+    });
+
+    // update/put added my issues
+    app.put("/my-issues/:id", async (req, res) => {
+      try {
+        const id = req.params.id;
+        const updatedIssue = req.body;
+
+        const filter = { _id: new ObjectId(id) };
+        const updateDoc = {
+          $set: {
+            title: updatedIssue.title,
+            category: updatedIssue.category,
+            amount: updatedIssue.amount,
+            description: updatedIssue.description,
+            status: updatedIssue.status,
+          },
+        };
+
+        const result = await issuesCollection.updateOne(filter, updateDoc);
+        res.send(result);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: "Failed to update issue" });
+      }
+    });
+
+    // delete my added issues
+    app.delete("/my-issues/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await issuesCollection.deleteOne(query);
+      res.send(result);
     });
 
     // post a new contribution
@@ -93,17 +125,28 @@ async function run() {
       res.send(result);
     });
 
-    // get all contributions
+    // get contributions for the logged-in user only
     app.get("/all-contributions", async (req, res) => {
-      const result = await contributionCollection.find().toArray();
-      res.send(result);
+      try {
+        const userEmail = req.query.email; // get email from query
+        if (!userEmail) {
+          return res.status(401).send({ message: "Unauthorized" });
+        }
+
+        // fetch contributions only for this user
+        const result = await contributionCollection
+          .find({ email: userEmail })
+          .toArray();
+        res.send(result);
+      } catch (error) {
+        res.status(500).send({ message: "Server Error" });
+      }
     });
+
     // GET all contributions for a specific issue
     app.get("/all-contributions/:id", async (req, res) => {
       const issueId = req.params.id;
-      const result = await contributionCollection
-        .find({ issueId }) // findOne না, শুধু find
-        .toArray();
+      const result = await contributionCollection.find({ issueId }).toArray();
       res.send(result);
     });
 
