@@ -130,7 +130,7 @@ async function run() {
       try {
         const userEmail = req.query.email; // get email from query
         if (!userEmail) {
-          return res.status(401).send({ message: "Unauthorized" });
+          return res.status(401).send({ message: "Unauthorized Man" });
         }
 
         // fetch contributions only for this user
