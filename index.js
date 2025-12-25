@@ -1,11 +1,44 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const port = process.env.PORT || 3000;
 require("dotenv").config();
+// var admin = require("firebase-admin");
+const port = process.env.PORT || 3000;
 // middleware
 app.use(cors());
 app.use(express.json());
+
+// index.js
+// const decoded = Buffer.from(process.env.FB_SECRET_KEY, "base64").toString(
+//   "utf8"
+// );
+
+// const serviceAccount = JSON.parse(decoded);
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+// });
+
+// // verify firebase token middleware
+// const verifyFBToken = async (req, res, next) => {
+//   const authHeaders = req.headers.authorization;
+//   if (!authHeaders) {
+//     return res.status(401).send({ message: "Unauthorized Access" });
+//   }
+
+//   const token = authHeaders.split(" ")[1];
+//   if (!token) {
+//     return res.status(401).send({ message: "Unauthorized Access" });
+//   }
+
+//   try {
+//     const decoded = await admin.auth().verifyIdToken(token);
+//     req.token_email = decoded.email;
+//     next();
+//   } catch (error) {
+//     console.error("Token verify error:", error.message);
+//     return res.status(403).send({ message: "Forbidden: Invalid Token" });
+//   }
+// };
 
 // MongoDB Server Connection
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
@@ -27,7 +60,7 @@ async function run() {
       .db("issuesDB")
       .collection("all-contributions");
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     //insert issue data
     app.post("/all-issues", async (req, res) => {
@@ -61,7 +94,7 @@ async function run() {
     });
 
     // get single card recent complaints
-    app.get("/recent-issues/:id", async (req, res) => {
+    app.get("/issues/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await issuesCollection.findOne(query);
