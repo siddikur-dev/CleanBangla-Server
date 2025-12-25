@@ -8,37 +8,6 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// index.js
-// const decoded = Buffer.from(process.env.FB_SECRET_KEY, "base64").toString(
-//   "utf8"
-// );
-
-// const serviceAccount = JSON.parse(decoded);
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount),
-// });
-
-// // verify firebase token middleware
-// const verifyFBToken = async (req, res, next) => {
-//   const authHeaders = req.headers.authorization;
-//   if (!authHeaders) {
-//     return res.status(401).send({ message: "Unauthorized Access" });
-//   }
-
-//   const token = authHeaders.split(" ")[1];
-//   if (!token) {
-//     return res.status(401).send({ message: "Unauthorized Access" });
-//   }
-
-//   try {
-//     const decoded = await admin.auth().verifyIdToken(token);
-//     req.token_email = decoded.email;
-//     next();
-//   } catch (error) {
-//     console.error("Token verify error:", error.message);
-//     return res.status(403).send({ message: "Forbidden: Invalid Token" });
-//   }
-// };
 
 // MongoDB Server Connection
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
@@ -151,40 +120,10 @@ async function run() {
       res.send(result);
     });
 
-    // post a new contribution
-    app.post("/all-contributions", async (req, res) => {
-      const contribution = req.body;
-      const result = await contributionCollection.insertOne(contribution);
-      res.send(result);
-    });
-
-    // get contributions for the logged-in user only
-    app.get("/all-contributions", async (req, res) => {
-      try {
-        const userEmail = req.query.email; // get email from query
-        if (!userEmail) {
-          return res.status(401).send({ message: "Unauthorized Man" });
-        }
-
-        // fetch contributions only for this user
-        const result = await contributionCollection
-          .find({ email: userEmail })
-          .toArray();
-        res.send(result);
-      } catch (error) {
-        res.status(500).send({ message: "Server Error" });
-      }
-    });
-
-    // GET all contributions for a specific issue
-    app.get("/all-contributions/:id", async (req, res) => {
-      const issueId = req.params.id;
-      const result = await contributionCollection.find({ issueId }).toArray();
-      res.send(result);
-    });
+    
 
     // Send a ping to confirm a successful connection
-    // await client.db("admin").command({ ping: 1 });
+    await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );

@@ -1,9 +1,4 @@
 node_modules
 .env
-<<<<<<< HEAD
 .vercel
 firebaseSecretKey.json
-=======
-firebaseSecretKey.json
-.vercel
->>>>>>> fba4202c91da57c344583986a9bc841a0acd904f
