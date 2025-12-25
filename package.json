@@ -15,7 +15,11 @@
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "firebase-admin": "^13.6.0",
+<<<<<<< HEAD
     "mongodb": "^6.20.0",
+=======
+    "mongodb": "^6.21.0",
+>>>>>>> fba4202c91da57c344583986a9bc841a0acd904f
     "sweetalert2": "^11.26.3"
   }
 }

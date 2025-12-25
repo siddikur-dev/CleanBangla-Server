@@ -163,7 +163,7 @@ async function run() {
       try {
         const userEmail = req.query.email; // get email from query
         if (!userEmail) {
-          return res.status(401).send({ message: "Unauthorized" });
+          return res.status(401).send({ message: "Unauthorized Man" });
         }
 
         // fetch contributions only for this user
@@ -184,7 +184,7 @@ async function run() {
     });
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
